@@ -44,11 +44,6 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
 
-    if (!name || !email || !password) {
-        showMessage('Please fill in all fields', 'error');
-        return;
-    }
-
     const submitBtn = e.target.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating account...';
@@ -66,7 +61,11 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
             showSection('profile');
         }, 1500);
     } else {
-        showMessage(result.data.message || 'Registration failed', 'error');
+        // Показываем все ошибки валидации с сервера
+        const errorMessage = result.data.errors
+            ? result.data.errors.join(', ')
+            : result.data.message || 'Registration failed';
+        showMessage(errorMessage, 'error');
     }
 });
 
@@ -76,11 +75,6 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
-
-    if (!email || !password) {
-        showMessage('Please fill in all fields', 'error');
-        return;
-    }
 
     const submitBtn = e.target.querySelector('button[type="submit"]');
     submitBtn.disabled = true;

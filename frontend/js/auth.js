@@ -1,4 +1,3 @@
-// Authentication Functions
 
 async function registerUser(name, email, password) {
     try {

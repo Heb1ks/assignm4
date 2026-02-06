@@ -1,22 +1,44 @@
 const User = require('../models/User');
 
-// @desc    Register a new user
+
+const isValidEmail = (email) => {
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return emailRegex.test(email);
+};
+
 // @route   POST /api/auth/register
-// @access  Public
 const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
+        const errors = [];
+
         // Validate required fields
-        if (!name || !email || !password) {
+        if (!name || name.trim() === '') {
+            errors.push('Name is required');
+        }
+
+        if (!email || email.trim() === '') {
+            errors.push('Email is required');
+        } else if (!isValidEmail(email)) {
+            errors.push('Please provide a valid email address');
+        }
+
+        if (!password || password === '') {
+            errors.push('Password is required');
+        } else if (password.length < 6) {
+            errors.push('Password must be at least 6 characters long');
+        }
+
+        if (errors.length > 0) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide name, email, and password.',
+                message: 'Validation failed',
+                errors: errors,
             });
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({
                 success: false,
@@ -24,14 +46,12 @@ const register = async (req, res) => {
             });
         }
 
-        // Create new user (password will be hashed automatically by pre-save hook)
         const user = await User.create({
-            name,
-            email,
+            name: name.trim(),
+            email: email.toLowerCase().trim(),
             password,
         });
 
-        // Store user ID in session
         req.session.userId = user._id;
 
         res.status(201).json({
@@ -64,23 +84,32 @@ const register = async (req, res) => {
     }
 };
 
-// @desc    Login user
 // @route   POST /api/auth/login
-// @access  Public
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validate required fields
-        if (!email || !password) {
+        const errors = [];
+
+        if (!email || email.trim() === '') {
+            errors.push('Email is required');
+        } else if (!isValidEmail(email)) {
+            errors.push('Please provide a valid email address');
+        }
+
+        if (!password || password === '') {
+            errors.push('Password is required');
+        }
+
+        if (errors.length > 0) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide email and password.',
+                message: 'Validation failed',
+                errors: errors,
             });
         }
 
-        // Find user by email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -88,7 +117,6 @@ const login = async (req, res) => {
             });
         }
 
-        // Compare password using bcrypt
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -97,7 +125,6 @@ const login = async (req, res) => {
             });
         }
 
-        // Store user ID in session
         req.session.userId = user._id;
 
         res.status(200).json({
@@ -118,9 +145,6 @@ const login = async (req, res) => {
     }
 };
 
-// @desc    Get user profile
-// @route   GET /api/auth/profile
-// @access  Private
 const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).select('-password');
@@ -151,9 +175,6 @@ const getProfile = async (req, res) => {
     }
 };
 
-// @desc    Logout user
-// @route   POST /api/auth/logout
-// @access  Private
 const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
