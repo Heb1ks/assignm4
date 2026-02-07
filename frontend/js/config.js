@@ -1,6 +1,6 @@
 // API Configuration
 const API_CONFIG = {
-    BASE_URL: 'https://gaming-reviews-backend.onrender.com',
+    BASE_URL: 'https://gaming-review-service-hbxa.onrender.com',
     ENDPOINTS: {
         // auth endpoints
         REGISTER: '/api/auth/register',
