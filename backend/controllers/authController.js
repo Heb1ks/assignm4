@@ -1,160 +1,130 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
-
-const isValidEmail = (email) => {
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return emailRegex.test(email);
+// generate JWT token
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, {
+        expiresIn: '7d', // token expires in 7 days
+    });
 };
 
-
-// работает - НЕ ТРОГАтьь
-// @route   POST /api/auth/register
+// register new user
 const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
-        const errors = [];
-
-        // Validate required fields
-        if (!name || name.trim() === '') {
-            errors.push('Name is required');
-        }
-
-        if (!email || email.trim() === '') {
-            errors.push('Email is required');
-        } else if (!isValidEmail(email)) {
-            errors.push('Please provide a valid email address');
-        }
-
-        if (!password || password === '') {
-            errors.push('Password is required');
-        } else if (password.length < 6) {
-            errors.push('Password must be at least 6 characters long');
-        }
-
-        if (errors.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: errors,
-            });
-        }
-
+        // check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: 'Email already registered. Please use a different email.',
+                message: 'user with this email already exists',
             });
         }
 
+        // create new user
         const user = await User.create({
             name: name.trim(),
             email: email.toLowerCase().trim(),
             password,
         });
 
+        // create session
         req.session.userId = user._id;
+
+        // generate JWT token
+        const token = generateToken(user._id);
 
         res.status(201).json({
             success: true,
-            message: 'User registered successfully.',
+            message: 'user registered successfully',
+            token,
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                bio: user.bio,
+                favoriteGenre: user.favoriteGenre,
                 createdAt: user.createdAt,
             },
         });
     } catch (error) {
-        console.error('Registration error:', error);
+        console.error('registration error:', error);
 
-        // Handle validation errors
-        if (error.name === 'ValidationError') {
-            const messages = Object.values(error.errors).map(err => err.message);
+        if (error.code === 11000) {
             return res.status(400).json({
                 success: false,
-                message: 'Validation failed',
-                errors: messages,
+                message: 'user with this email already exists',
             });
         }
 
         res.status(500).json({
             success: false,
-            message: 'Server error. Please try again later.',
+            message: 'registration failed. Please try again.',
         });
     }
 };
 
-// @route   POST /api/auth/login
+// login user
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const errors = [];
-
-        if (!email || email.trim() === '') {
-            errors.push('Email is required');
-        } else if (!isValidEmail(email)) {
-            errors.push('Please provide a valid email address');
-        }
-
-        if (!password || password === '') {
-            errors.push('Password is required');
-        }
-
-        if (errors.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: errors,
-            });
-        }
-
+        // find user by email
         const user = await User.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid email or password.',
+                message: 'invalid email or password',
             });
         }
 
+        // check password
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid email or password.',
+                message: 'invalid email or password',
             });
         }
 
+        // create session
         req.session.userId = user._id;
+
+        // generate JWT token
+        const token = generateToken(user._id);
 
         res.status(200).json({
             success: true,
-            message: 'Login successful.',
+            message: 'login successful',
+            token,
             user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                bio: user.bio,
+                favoriteGenre: user.favoriteGenre,
+                createdAt: user.createdAt,
             },
         });
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('login error:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error. Please try again later.',
+            message: 'login failed. Please try again.',
         });
     }
 };
 
+// get user profile
 const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.session.userId).select('-password');
+        const user = await User.findById(req.userId).select('-password');
 
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found.',
+                message: 'user not found',
             });
         }
 
@@ -164,40 +134,96 @@ const getProfile = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                bio: user.bio,
+                favoriteGenre: user.favoriteGenre,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             },
         });
     } catch (error) {
-        console.error('Profile error:', error);
+        console.error('profile error:', error);
         res.status(500).json({
             success: false,
-            message: 'Server error. Please try again later.',
+            message: 'failed to fetch profile',
         });
     }
 };
 
-const logout = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error('Logout error:', err);
-            return res.status(500).json({
+// update user profile
+const updateProfile = async (req, res) => {
+    try {
+        const { name, bio, favoriteGenre } = req.body;
+        const updateData = {};
+
+        if (name !== undefined) updateData.name = name.trim();
+        if (bio !== undefined) updateData.bio = bio.trim();
+        if (favoriteGenre !== undefined) updateData.favoriteGenre = favoriteGenre.trim();
+
+        const user = await User.findByIdAndUpdate(
+            req.userId,
+            updateData,
+            { new: true, runValidators: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message: 'Error logging out. Please try again.',
+                message: 'user not found',
             });
         }
 
-        res.clearCookie('connect.sid');
         res.status(200).json({
             success: true,
-            message: 'Logout successful.',
+            message: 'profile updated successfully',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                bio: user.bio,
+                favoriteGenre: user.favoriteGenre,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+            },
         });
-    });
+    } catch (error) {
+        console.error('update profile error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'failed to update profile',
+        });
+    }
+};
+
+// logout user
+const logout = async (req, res) => {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('logout error:', err);
+                return res.status(500).json({
+                    success: false,
+                    message: 'logout failed',
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                message: 'logged out successfully',
+            });
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'logout failed',
+        });
+    }
 };
 
 module.exports = {
     register,
     login,
     getProfile,
+    updateProfile,
     logout,
 };

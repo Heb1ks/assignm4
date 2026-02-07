@@ -3,72 +3,224 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>test</title>
+  <title>review gaming</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="container">
-  <h1 class="main-title">auth</h1>
+  <h1 class="main-title">gaming review platform</h1>
 
   <div id="message" class="message"></div>
 
-  <!-- Login Form -->
+  <!-- ========== LOGIN SECTION ========== -->
   <div id="login-section" class="form-section active">
-    <h2>login</h2>
+    <h2>Login</h2>
     <form id="login-form">
       <div class="form-group">
         <label for="login-email">email</label>
-        <input type="text" id="login-email" placeholder="your@email.com">
+        <input type="email" id="login-email" placeholder="your@email.com" required>
       </div>
       <div class="form-group">
         <label for="login-password">password</label>
-        <input type="password" id="login-password" placeholder="••••••••">
+        <input type="password" id="login-password" placeholder="••••••••" required>
       </div>
       <button type="submit" class="btn btn-primary">login</button>
     </form>
     <div class="toggle-link" onclick="showSection('register')">
-      dont have an account? <span>register here</span>
+      don't have an account? <span>register here</span>
     </div>
   </div>
 
-  <!-- Register Form -->
+  <!-- ========== REGISTER SECTION ========== -->
   <div id="register-section" class="form-section">
-    <h2>create Account</h2>
+    <h2>Create Account</h2>
     <form id="register-form">
       <div class="form-group">
-        <label for="register-name">name</label>
-        <input type="text" id="register-name" placeholder="John Doe">
+        <label for="register-name">Name</label>
+        <input type="text" id="register-name" placeholder="John Doe" required>
       </div>
       <div class="form-group">
-        <label for="register-email">email</label>
-        <input type="text" id="register-email" placeholder="your@email.com">
+        <label for="register-email">Email</label>
+        <input type="email" id="register-email" placeholder="your@email.com" required>
       </div>
       <div class="form-group">
-        <label for="register-password">password</label>
-        <input type="password" id="register-password" placeholder="••••••••">
-        <small>password must be at least 6 characters</small>
+        <label for="register-password">Password</label>
+        <input type="password" id="register-password" placeholder="••••••••" required>
+        <small>Password must be at least 6 characters</small>
       </div>
       <button type="submit" class="btn btn-primary">Register</button>
     </form>
     <div class="toggle-link" onclick="showSection('login')">
-      already have an account? <span>login here</span>
+      Already have an account? <span>Login here</span>
     </div>
   </div>
 
-  <!-- Profile Section -->
+  <!-- ========== PROFILE SECTION ========== -->
   <div id="profile-section" class="form-section">
-    <h2>user Profile</h2>
-    <div id="profile-info" class="profile-info">
-      <div class="profile-loader">loading</div>
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="showSection('profile')">Profile</button>
+      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
-    <button class="btn btn-danger" onclick="logout()">logout</button>
-    <div class="back-link" onclick="showSection('login')">← back to login</div>
-  </div>
-</div>
 
+    <h2>User Profile</h2>
+    <div id="profile-info" class="profile-info">
+      <div class="profile-loader">Loading...</div>
+    </div>
+    <button class="btn btn-secondary" onclick="showEditProfile()">Edit Profile</button>
+    <button class="btn btn-danger" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- ========== EDIT PROFILE SECTION ========== -->
+  <div id="edit-profile-section" class="form-section">
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="showSection('profile')">Profile</button>
+      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
+    </div>
+
+    <h2>Edit Profile</h2>
+    <form id="edit-profile-form">
+      <div class="form-group">
+        <label for="edit-name">Name</label>
+        <input type="text" id="edit-name" placeholder="Your name" required>
+      </div>
+      <div class="form-group">
+        <label for="edit-bio">Bio</label>
+        <textarea id="edit-bio" placeholder="Tell us about yourself..." maxlength="200"></textarea>
+        <small>Max 200 characters</small>
+      </div>
+      <div class="form-group">
+        <label for="edit-genre">Favorite Genre</label>
+        <input type="text" id="edit-genre" placeholder="e.g., RPG, FPS, Strategy" maxlength="50">
+      </div>
+      <button type="submit" class="btn btn-primary">Update Profile</button>
+      <button type="button" class="btn btn-secondary" onclick="showSection('profile')">Cancel</button>
+    </form>
+  </div>
+
+  <!-- ========== REVIEWS SECTION ========== -->
+  <div id="reviews-section" class="form-section">
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="showSection('profile')">Profile</button>
+      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
+    </div>
+
+    <div class="reviews-header">
+      <h2>My Reviews</h2>
+      <button class="btn btn-primary" onclick="showCreateReview()" style="width: auto; margin: 0;">+ New Review</button>
+    </div>
+    <div id="reviews-list"></div>
+    <button class="btn btn-danger" onclick="logout()" style="margin-top: 30px;">Logout</button>
+  </div>
+
+  <!-- ========== CREATE REVIEW SECTION ========== -->
+  <div id="create-review-section" class="form-section">
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="showSection('profile')">Profile</button>
+      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
+    </div>
+
+    <h2>Create New Review</h2>
+    <form id="create-review-form">
+      <div class="form-group">
+        <label for="review-title">Review Title</label>
+        <input type="text" id="review-title" placeholder="e.g., Amazing RPG Experience" required maxlength="100">
+      </div>
+      <div class="form-group">
+        <label for="review-game">Game Name</label>
+        <input type="text" id="review-game" placeholder="e.g., The Witcher 3" required maxlength="100">
+      </div>
+      <div class="form-group">
+        <label for="review-rating">Rating (1-10)</label>
+        <input type="number" id="review-rating" min="1" max="10" step="0.1" placeholder="8.5" required>
+      </div>
+      <div class="form-group">
+        <label for="review-platform">Platform (optional)</label>
+        <input type="text" id="review-platform" placeholder="e.g., PC, PS5, Xbox" maxlength="50">
+      </div>
+      <div class="form-group">
+        <label for="review-genre">Genre (optional)</label>
+        <input type="text" id="review-genre" placeholder="e.g., RPG, Action" maxlength="50">
+      </div>
+      <div class="form-group">
+        <label for="review-content">Review Content</label>
+        <textarea id="review-content" placeholder="Share your thoughts about the game..." required minlength="10" maxlength="5000"></textarea>
+        <small>Minimum 10 characters, maximum 5000 characters</small>
+      </div>
+      <button type="submit" class="btn btn-primary">Create Review</button>
+      <button type="button" class="btn btn-secondary" onclick="showSection('reviews')">Cancel</button>
+    </form>
+  </div>
+
+  <!-- ========== EDIT REVIEW SECTION ========== -->
+  <div id="edit-review-section" class="form-section">
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="showSection('profile')">Profile</button>
+      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
+    </div>
+
+    <h2>Edit Review</h2>
+    <form id="edit-review-form">
+      <input type="hidden" id="edit-review-id">
+      <div class="form-group">
+        <label for="edit-review-title">Review Title</label>
+        <input type="text" id="edit-review-title" placeholder="e.g., Amazing RPG Experience" required maxlength="100">
+      </div>
+      <div class="form-group">
+        <label for="edit-review-game">Game Name</label>
+        <input type="text" id="edit-review-game" placeholder="e.g., The Witcher 3" required maxlength="100">
+      </div>
+      <div class="form-group">
+        <label for="edit-review-rating">Rating (1-10)</label>
+        <input type="number" id="edit-review-rating" min="1" max="10" step="0.1" placeholder="8.5" required>
+      </div>
+      <div class="form-group">
+        <label for="edit-review-platform">Platform (optional)</label>
+        <input type="text" id="edit-review-platform" placeholder="e.g., PC, PS5, Xbox" maxlength="50">
+      </div>
+      <div class="form-group">
+        <label for="edit-review-genre">Genre (optional)</label>
+        <input type="text" id="edit-review-genre" placeholder="e.g., RPG, Action" maxlength="50">
+      </div>
+      <div class="form-group">
+        <label for="edit-review-content">Review Content</label>
+        <textarea id="edit-review-content" placeholder="Share your thoughts about the game..." required minlength="10" maxlength="5000"></textarea>
+        <small>Minimum 10 characters, maximum 5000 characters</small>
+      </div>
+      <button type="submit" class="btn btn-primary">Update Review</button>
+      <button type="button" class="btn btn-secondary" onclick="showSection('reviews')">Cancel</button>
+    </form>
+  </div>
+
+  <!-- ========== GAMES SECTION ========== -->
+  <div id="games-section" class="form-section">
+    <div class="nav-menu">
+      <button class="nav-btn" onclick="showSection('profile')">Profile</button>
+      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
+    </div>
+
+    <div class="games-header">
+      <h2>Discover Games</h2>
+      <div class="search-bar">
+        <input type="text" id="game-search" placeholder="Search for games...">
+        <button class="btn btn-primary" onclick="searchGamesHandler()">Search</button>
+      </div>
+    </div>
+    <div id="games-list"></div>
+    <button class="btn btn-danger" onclick="logout()" style="margin-top: 30px;">Logout</button>
+  </div>
+
+</div>
 
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/reviews.js"></script>
+<script src="js/games.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

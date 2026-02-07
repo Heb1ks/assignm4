@@ -4,28 +4,27 @@
     box-sizing: border-box;
 }
 
-/* ===== DARK THEME VARIABLES ===== */
+/* ===== DARK GAMING THEME VARIABLES ===== */
 :root {
-    --primary-color: #3b82f6;
-    --secondary-color: #1e40af;
-    --success-color: #22c55e;
+    --primary-color: #8b5cf6;
+    --secondary-color: #6d28d9;
+    --success-color: #10b981;
     --danger-color: #ef4444;
-
-    --text-main: #e5e7eb;
+    --warning-color: #f59e0b;
+    --text-main: #f3f4f6;
     --text-muted: #9ca3af;
-
     --border-color: #374151;
     --bg-main: #0f172a;
-    --bg-card: #020617;
-    --bg-soft: #020617;
-
+    --bg-card: #1e293b;
+    --bg-soft: #1e293b;
     --shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    --shadow-hover: 0 25px 50px rgba(139, 92, 246, 0.3);
 }
 
 /* ===== BODY ===== */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: linear-gradient(135deg, #020617 0%, #020617 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -38,10 +37,10 @@ body {
 /* ===== CONTAINER ===== */
 .container {
     background: var(--bg-card);
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow: var(--shadow);
     width: 100%;
-    max-width: 480px;
+    max-width: 900px;
     padding: 40px;
     animation: fadeIn 0.5s ease;
 }
@@ -56,11 +55,42 @@ h2 {
 }
 
 .main-title {
-    font-size: 28px;
+    font-size: 32px;
+    background: linear-gradient(135deg, var(--primary-color), #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 h2 {
-    font-size: 22px;
+    font-size: 24px;
+}
+
+/* ===== NAVIGATION ===== */
+.nav-menu {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.nav-btn {
+    padding: 10px 20px;
+    background: var(--bg-soft);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.nav-btn:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
 }
 
 /* ===== FORM ===== */
@@ -70,6 +100,7 @@ h2 {
 
 .form-section.active {
     display: block;
+    animation: fadeIn 0.3s ease;
 }
 
 .form-group {
@@ -78,13 +109,16 @@ h2 {
 
 label {
     display: block;
-    margin-bottom: 6px;
-    color: var(--text-muted);
+    margin-bottom: 8px;
+    color: var(--text-main);
     font-size: 14px;
+    font-weight: 600;
 }
 
 /* ===== INPUT ===== */
-input {
+input,
+textarea,
+select {
     width: 100%;
     padding: 12px 16px;
     background: var(--bg-soft);
@@ -94,15 +128,24 @@ input {
     color: var(--text-main);
     outline: none;
     transition: all 0.25s ease;
+    font-family: inherit;
 }
 
-input::placeholder {
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
     color: #6b7280;
 }
 
-input:focus {
+input:focus,
+textarea:focus,
+select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
 /* ===== SMALL TEXT ===== */
@@ -121,6 +164,7 @@ small {
     cursor: pointer;
     border: none;
     transition: all 0.25s ease;
+    margin-top: 10px;
 }
 
 .btn-primary {
@@ -128,9 +172,19 @@ small {
     color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 8px 18px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+    background: var(--bg-soft);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--border-color);
 }
 
 .btn-danger {
@@ -138,9 +192,42 @@ small {
     color: white;
 }
 
-.btn-danger:hover {
+.btn-danger:hover:not(:disabled) {
     background: #dc2626;
     box-shadow: 0 8px 18px rgba(239, 68, 68, 0.4);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-edit {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: var(--secondary-color);
+}
+
+.btn-delete {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
 }
 
 /* ===== LINKS ===== */
@@ -150,13 +237,13 @@ small {
     margin-top: 16px;
     font-size: 14px;
     color: var(--text-muted);
+    cursor: pointer;
 }
 
 .toggle-link span,
 .back-link {
     color: var(--primary-color);
     font-weight: 600;
-    cursor: pointer;
 }
 
 .toggle-link span:hover,
@@ -174,9 +261,9 @@ small {
 }
 
 .message.success {
-    background: rgba(34, 197, 94, 0.15);
+    background: rgba(16, 185, 129, 0.15);
     border: 1px solid var(--success-color);
-    color: #86efac;
+    color: #6ee7b7;
 }
 
 .message.error {
@@ -196,7 +283,7 @@ small {
 .profile-item {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 12px 0;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -207,12 +294,206 @@ small {
 .profile-label {
     color: var(--text-muted);
     font-size: 14px;
+    font-weight: 600;
 }
 
 .profile-value {
     color: var(--text-main);
     font-weight: 600;
     font-size: 14px;
+    text-align: right;
+}
+
+/* ===== REVIEWS ===== */
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#reviews-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.review-card {
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.review-header h3 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin: 0;
+    flex: 1;
+}
+
+.review-rating {
+    background: var(--warning-color);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.review-game {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.review-platform,
+.review-genre {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.review-content {
+    color: var(--text-main);
+    margin: 15px 0;
+    line-height: 1.6;
+    font-size: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.review-date {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.review-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* ===== GAMES ===== */
+.games-header {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    flex: 1;
+}
+
+.search-bar button {
+    width: auto;
+    padding: 12px 24px;
+    white-space: nowrap;
+}
+
+#games-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.game-card {
+    background: var(--bg-soft);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.game-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.game-info {
+    padding: 15px;
+}
+
+.game-info h3 {
+    font-size: 16px;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.game-rating {
+    background: var(--warning-color);
+    color: #000;
+    padding: 3px 10px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 12px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.game-released,
+.game-platforms,
+.game-genres {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+/* ===== LOADING & STATES ===== */
+.loading,
+.profile-loader,
+.empty-state,
+.error-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.error-state {
+    color: var(--danger-color);
+}
+
+.empty-state {
+    color: var(--text-muted);
 }
 
 /* ===== FOOTER ===== */
@@ -236,8 +517,53 @@ small {
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .container {
         padding: 30px 20px;
+    }
+
+    .main-title {
+        font-size: 26px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    #reviews-list,
+    #games-list {
+        grid-template-columns: 1fr;
+    }
+
+    .review-header {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .review-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .search-bar button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+    }
+
+    .nav-btn {
+        width: 100%;
     }
 }
