@@ -6,6 +6,8 @@ const isValidEmail = (email) => {
     return emailRegex.test(email);
 };
 
+
+// работает - НЕ ТРОГАтьь
 // @route   POST /api/auth/register
 const register = async (req, res) => {
     try {

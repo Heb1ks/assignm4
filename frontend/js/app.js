@@ -1,5 +1,3 @@
-// UI Helper Functions
-
 function showSection(section) {
     document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
     document.getElementById(`${section}-section`).classList.add('active');

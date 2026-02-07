@@ -18,7 +18,6 @@ app.use(
     })
 );
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,16 +30,16 @@ app.use(
         cookie: {
             httpOnly: true,
             maxAge: 1000 * 60 * 60, // 1 hour
-            secure: process.env.NODE_ENV === 'production', // true in production (HTTPS)
+            // secure: process.env.NODE_ENV === 'production', // true in production https
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         },
     })
 );
 
-// Routes
+
 app.use('/api/auth', authRoutes);
 
-// Health check route
+
 app.get('/api/health', (req, res) => {
     res.status(200).json({
         success: true,
@@ -57,7 +56,6 @@ app.use((req, res) => {
     });
 });
 
-// Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({

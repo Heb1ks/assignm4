@@ -5,24 +5,34 @@ const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, 'Name is required'],
+            required: [true, 'name is required'],
             trim: true,
         },
         email: {
             type: String,
-            required: [true, 'Email is required'],
+            required: [true, 'email is required'],
             unique: true,
             lowercase: true,
             trim: true,
             match: [
                 /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                'Please provide a valid email address',
+                'please provide a valid email address',
             ],
         },
         password: {
             type: String,
-            required: [true, 'Password is required'],
-            minlength: [6, 'Password must be at least 6 characters long'],
+            required: [true, 'password is required'],
+            minlength: [6, 'password minimum 6 length'],
+        },
+        bio: {
+            type: String,
+            maxlength: [200, 'bio cannot exceed 200 characters'],
+            default: '',
+        },
+        favoriteGenre: {
+            type: String,
+            maxlength: [50, 'favorite genre cannot exceed 50 characters'],
+            default: '',
         },
     },
     {
@@ -30,7 +40,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-// Hash password before saving
+// hash password before saving
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
@@ -45,9 +55,9 @@ userSchema.pre('save', async function (next) {
     }
 });
 
-// Method to compare passwords
+// method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('user', userSchema);
