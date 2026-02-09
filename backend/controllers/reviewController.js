@@ -1,6 +1,6 @@
 const Review = require('../models/Review');
 
-// create new review
+// Create new review
 const createReview = async (req, res) => {
     try {
         const { title, content, gameName, rating, platform, genre } = req.body;
@@ -22,19 +22,19 @@ const createReview = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'review created successfully',
+            message: 'Review created successfully',
             review: populatedReview,
         });
     } catch (error) {
-        console.error('create review error:', error);
+        console.error('Create review error:', error);
         res.status(500).json({
             success: false,
-            message: 'failed to create review',
+            message: 'Failed to create review',
         });
     }
 };
 
-// get all reviews for logged-in user
+// Get all reviews for logged-in user (their own reviews)
 const getUserReviews = async (req, res) => {
     try {
         const reviews = await Review.find({ author: req.userId })
@@ -47,15 +47,37 @@ const getUserReviews = async (req, res) => {
             reviews,
         });
     } catch (error) {
-        console.error('get reviews error:', error);
+        console.error('Get reviews error:', error);
         res.status(500).json({
             success: false,
-            message: 'failed to fetch reviews',
+            message: 'Failed to fetch reviews',
         });
     }
 };
 
-// get single review by ID
+// Get all reviews from all users (public feed)
+const getAllReviews = async (req, res) => {
+    try {
+        const reviews = await Review.find()
+            .populate('author', 'name email')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: reviews.length,
+            reviews,
+            currentUserId: req.userId, // Send current user ID to frontend
+        });
+    } catch (error) {
+        console.error('Get all reviews error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch reviews',
+        });
+    }
+};
+
+// Get single review by ID
 const getReviewById = async (req, res) => {
     try {
         const review = await Review.findById(req.params.id).populate(
@@ -70,11 +92,11 @@ const getReviewById = async (req, res) => {
             });
         }
 
-        // check if user is the author
+        // Check if user is the author
         if (review.author._id.toString() !== req.userId) {
             return res.status(403).json({
                 success: false,
-                message: 'you donot have permission to view this review',
+                message: 'You do not have permission to view this review',
             });
         }
 
@@ -83,28 +105,28 @@ const getReviewById = async (req, res) => {
             review,
         });
     } catch (error) {
-        console.error('get review error:', error);
+        console.error('Get review error:', error);
 
         if (error.kind === 'ObjectId') {
             return res.status(400).json({
                 success: false,
-                message: 'invalid review ID',
+                message: 'Invalid review ID',
             });
         }
 
         res.status(500).json({
             success: false,
-            message: 'failed to fetch review',
+            message: 'Failed to fetch review',
         });
     }
 };
 
-// update review
+// Update review
 const updateReview = async (req, res) => {
     try {
         const { title, content, gameName, rating, platform, genre } = req.body;
 
-        // find review
+        // Find review
         const review = await Review.findById(req.params.id);
 
         if (!review) {
@@ -114,15 +136,15 @@ const updateReview = async (req, res) => {
             });
         }
 
-        // vheck if user is the author
+        // Check if user is the author
         if (review.author.toString() !== req.userId) {
             return res.status(403).json({
                 success: false,
-                message: 'you do not have permission to update this review',
+                message: 'You do not have permission to update this review',
             });
         }
 
-        // update fields
+        // Update fields
         const updateData = {};
         if (title !== undefined) updateData.title = title.trim();
         if (content !== undefined) updateData.content = content.trim();
@@ -139,27 +161,27 @@ const updateReview = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'review updated successfully',
+            message: 'Review updated successfully',
             review: updatedReview,
         });
     } catch (error) {
-        console.error('update review error:', error);
+        console.error('Update review error:', error);
 
         if (error.kind === 'ObjectId') {
             return res.status(400).json({
                 success: false,
-                message: 'invalid review ID',
+                message: 'Invalid review ID',
             });
         }
 
         res.status(500).json({
             success: false,
-            message: 'failed to update review',
+            message: 'Failed to update review',
         });
     }
 };
 
-// delete review
+// Delete review
 const deleteReview = async (req, res) => {
     try {
         const review = await Review.findById(req.params.id);
@@ -167,11 +189,11 @@ const deleteReview = async (req, res) => {
         if (!review) {
             return res.status(404).json({
                 success: false,
-                message: 'review not found',
+                message: 'Review not found',
             });
         }
 
-        // check if user is the author
+        // Check if user is the author
         if (review.author.toString() !== req.userId) {
             return res.status(403).json({
                 success: false,
@@ -183,10 +205,10 @@ const deleteReview = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'review deleted successfully',
+            message: 'Review deleted successfully',
         });
     } catch (error) {
-        console.error('delete review error:', error);
+        console.error('Delete review error:', error);
 
         if (error.kind === 'ObjectId') {
             return res.status(400).json({
@@ -197,7 +219,7 @@ const deleteReview = async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: 'failed to delete review',
+            message: 'Failed to delete review',
         });
     }
 };
@@ -205,6 +227,7 @@ const deleteReview = async (req, res) => {
 module.exports = {
     createReview,
     getUserReviews,
+    getAllReviews,
     getReviewById,
     updateReview,
     deleteReview,

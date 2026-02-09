@@ -1,21 +1,22 @@
 // API Configuration
 const API_CONFIG = {
-    BASE_URL: 'https://gaming-review-service-hbxa.onrender.com',
+    BASE_URL: 'http://localhost:5000',
     ENDPOINTS: {
-        // auth endpoints
+        // Auth endpoints
         REGISTER: '/api/auth/register',
         LOGIN: '/api/auth/login',
         PROFILE: '/api/auth/profile',
         LOGOUT: '/api/auth/logout',
 
-        // user endpoints
+        // User endpoints
         UPDATE_PROFILE: '/api/users/profile',
 
-        // review endpoints
+        // Review endpoints
         REVIEWS: '/api/reviews',
+        ALL_REVIEWS: '/api/reviews/all',
         REVIEW_BY_ID: (id) => `/api/reviews/${id}`,
 
-        // games API endpoints
+        // Games API endpoints
         POPULAR_GAMES: '/api/games/popular',
         SEARCH_GAMES: '/api/games/search',
         UPCOMING_GAMES: '/api/games/upcoming',
@@ -23,7 +24,7 @@ const API_CONFIG = {
     }
 };
 
-// helper function to build full API URL
+// Helper function to build full API URL
 const getApiUrl = (endpoint) => {
     if (typeof endpoint === 'function') {
         return (id) => `${API_CONFIG.BASE_URL}${endpoint(id)}`;
@@ -31,7 +32,7 @@ const getApiUrl = (endpoint) => {
     return `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS[endpoint]}`;
 };
 
-// token management
+// Token management
 const TokenManager = {
     get: () => localStorage.getItem('authToken'),
     set: (token) => localStorage.setItem('authToken', token),

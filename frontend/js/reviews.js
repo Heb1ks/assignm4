@@ -1,3 +1,5 @@
+// Review API functions
+
 async function createReview(reviewData) {
     try {
         const response = await makeAuthRequest(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.REVIEWS}`, {
@@ -8,10 +10,10 @@ async function createReview(reviewData) {
         const data = await response.json();
         return { success: response.ok, data };
     } catch (error) {
-        console.error('create review error:', error);
+        console.error('Create review error:', error);
         return {
             success: false,
-            data: { message: 'network error. Please try again.' }
+            data: { message: 'Network error. Please try again.' }
         };
     }
 }
@@ -25,10 +27,27 @@ async function getUserReviews() {
         const data = await response.json();
         return { success: response.ok, data };
     } catch (error) {
-        console.error('get reviews error:', error);
+        console.error('Get reviews error:', error);
         return {
             success: false,
-            data: { message: 'network error. Please try again.' }
+            data: { message: 'Network error. Please try again.' }
+        };
+    }
+}
+
+async function getAllReviews() {
+    try {
+        const response = await makeAuthRequest(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ALL_REVIEWS}`, {
+            method: 'GET',
+        });
+
+        const data = await response.json();
+        return { success: response.ok, data };
+    } catch (error) {
+        console.error('Get all reviews error:', error);
+        return {
+            success: false,
+            data: { message: 'Network error. Please try again.' }
         };
     }
 }
@@ -42,10 +61,10 @@ async function getReviewById(id) {
         const data = await response.json();
         return { success: response.ok, data };
     } catch (error) {
-        console.error('get review error:', error);
+        console.error('Get review error:', error);
         return {
             success: false,
-            data: { message: 'network error. Please try again.' }
+            data: { message: 'Network error. Please try again.' }
         };
     }
 }
@@ -60,10 +79,10 @@ async function updateReview(id, reviewData) {
         const data = await response.json();
         return { success: response.ok, data };
     } catch (error) {
-        console.error('update review error:', error);
+        console.error('Update review error:', error);
         return {
             success: false,
-            data: { message: 'network error. Please try again.' }
+            data: { message: 'Network error. Please try again.' }
         };
     }
 }
@@ -77,10 +96,10 @@ async function deleteReview(id) {
         const data = await response.json();
         return { success: response.ok, data };
     } catch (error) {
-        console.error('delete review error:', error);
+        console.error('Delete review error:', error);
         return {
             success: false,
-            data: { message: 'network error. Please try again.' }
+            data: { message: 'Network error. Please try again.' }
         };
     }
 }

@@ -1,3 +1,4 @@
+// Current section tracker
 let currentSection = 'login';
 let currentReviews = [];
 
@@ -9,7 +10,7 @@ function showSection(section) {
         currentSection = section;
         hideMessage();
 
-        // load data when switching to certain sections
+        // Load data when switching to certain sections
         if (section === 'profile') {
             loadProfile();
         } else if (section === 'reviews') {
@@ -49,7 +50,7 @@ function formatDate(dateString) {
     });
 }
 
-// registr form
+// ========== REGISTER FORM ==========
 document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('register-name').value.trim();
@@ -58,12 +59,12 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
 
     const submitBtn = e.target.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'creating account';
+    submitBtn.textContent = 'Creating account...';
 
     const result = await registerUser(name, email, password);
 
     submitBtn.disabled = false;
-    submitBtn.textContent = 'register';
+    submitBtn.textContent = 'Register';
 
     if (result.success) {
         showMessage(result.data.message, 'success');
@@ -74,12 +75,12 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     } else {
         const errorMessage = result.data.errors
             ? result.data.errors.join(', ')
-            : result.data.message || 'registration failed';
+            : result.data.message || 'Registration failed';
         showMessage(errorMessage, 'error');
     }
 });
 
-// logn form
+// ========== LOGIN FORM ==========
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
@@ -87,12 +88,12 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
     const submitBtn = e.target.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Logging in';
+    submitBtn.textContent = 'Logging in...';
 
     const result = await loginUser(email, password);
 
     submitBtn.disabled = false;
-    submitBtn.textContent = 'login';
+    submitBtn.textContent = 'Login';
 
     if (result.success) {
         showMessage(result.data.message, 'success');
@@ -101,11 +102,11 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
             showSection('profile');
         }, 1500);
     } else {
-        showMessage(result.data.message || 'login failed', 'error');
+        showMessage(result.data.message || 'Login failed', 'error');
     }
 });
 
-// profile func
+// ========== PROFILE FUNCTIONS ==========
 async function loadProfile() {
     const profileInfo = document.getElementById('profile-info');
     profileInfo.innerHTML = '<div class="profile-loader">Loading profile...</div>';
@@ -189,7 +190,7 @@ document.getElementById('edit-profile-form').addEventListener('submit', async (e
     }
 });
 
-// logout
+// ========== LOGOUT ==========
 async function logout() {
     const logoutBtn = document.querySelector('.btn-danger');
     if (logoutBtn) {
@@ -216,42 +217,91 @@ async function logout() {
     }
 }
 
-// review function
+// ========== REVIEWS FUNCTIONS ==========
 async function loadReviews() {
     const reviewsList = document.getElementById('reviews-list');
     reviewsList.innerHTML = '<div class="loading">Loading reviews...</div>';
 
-    const result = await getUserReviews();
+    // Get both user's reviews and all reviews
+    const [myReviewsResult, allReviewsResult] = await Promise.all([
+        getUserReviews(),
+        getAllReviews()
+    ]);
 
-    if (result.success) {
-        currentReviews = result.data.reviews;
+    if (!allReviewsResult.success) {
+        reviewsList.innerHTML = `<div class="error-state">${allReviewsResult.data.message || 'Failed to load reviews'}</div>`;
+        return;
+    }
 
-        if (currentReviews.length === 0) {
-            reviewsList.innerHTML = '<div class="empty-state">No reviews yet. Create your first review!</div>';
-        } else {
-            reviewsList.innerHTML = currentReviews.map(review => `
-        <div class="review-card">
-          <div class="review-header">
-            <h3>${review.title}</h3>
-            <div class="review-rating">★ ${review.rating}/10</div>
-          </div>
-          <div class="review-game">${review.gameName}</div>
-          ${review.platform ? `<div class="review-platform">Platform: ${review.platform}</div>` : ''}
-          ${review.genre ? `<div class="review-genre">Genre: ${review.genre}</div>` : ''}
-          <div class="review-content">${review.content}</div>
-          <div class="review-footer">
-            <span class="review-date">${formatDate(review.createdAt)}</span>
-            <div class="review-actions">
-              <button class="btn-small btn-edit" onclick="editReview('${review._id}')">Edit</button>
-              <button class="btn-small btn-delete" onclick="confirmDeleteReview('${review._id}')">Delete</button>
-            </div>
+    const allReviews = allReviewsResult.data.reviews;
+    const currentUserId = allReviewsResult.data.currentUserId;
+
+    // Separate my reviews and others' reviews
+    const myReviews = allReviews.filter(review => review.author._id === currentUserId);
+    const othersReviews = allReviews.filter(review => review.author._id !== currentUserId);
+
+    if (allReviews.length === 0) {
+        reviewsList.innerHTML = '<div class="empty-state">No reviews yet. Be the first to create a review!</div>';
+        return;
+    }
+
+    let html = '';
+
+    // My Reviews Section
+    if (myReviews.length > 0) {
+        html += '<div class="reviews-section-header">✨ My Reviews</div>';
+        html += '<div class="reviews-grid">';
+        html += myReviews.map(review => `
+      <div class="review-card my-review">
+        <div class="my-review-badge">Your Review</div>
+        <div class="review-header">
+          <h3>${review.title}</h3>
+          <div class="review-rating">★ ${review.rating}/10</div>
+        </div>
+        <div class="review-game">${review.gameName}</div>
+        ${review.platform ? `<div class="review-platform">Platform: ${review.platform}</div>` : ''}
+        ${review.genre ? `<div class="review-genre">Genre: ${review.genre}</div>` : ''}
+        <div class="review-content">${review.content}</div>
+        <div class="review-footer">
+          <span class="review-date">${formatDate(review.createdAt)}</span>
+          <div class="review-actions">
+            <button class="btn-small btn-edit" onclick="editReview('${review._id}')">Edit</button>
+            <button class="btn-small btn-delete" onclick="confirmDeleteReview('${review._id}')">Delete</button>
           </div>
         </div>
-      `).join('');
-        }
-    } else {
-        reviewsList.innerHTML = `<div class="error-state">${result.data.message || 'Failed to load reviews'}</div>`;
+      </div>
+    `).join('');
+        html += '</div>';
     }
+
+    // All Reviews Section
+    if (othersReviews.length > 0) {
+        html += '<div class="reviews-section-header">🌍 Community Reviews</div>';
+        html += '<div class="reviews-grid">';
+        html += othersReviews.map(review => `
+      <div class="review-card">
+        <div class="review-author">
+          <span class="author-icon">👤</span>
+          <span class="author-name">${review.author.name}</span>
+        </div>
+        <div class="review-header">
+          <h3>${review.title}</h3>
+          <div class="review-rating">★ ${review.rating}/10</div>
+        </div>
+        <div class="review-game">${review.gameName}</div>
+        ${review.platform ? `<div class="review-platform">Platform: ${review.platform}</div>` : ''}
+        ${review.genre ? `<div class="review-genre">Genre: ${review.genre}</div>` : ''}
+        <div class="review-content">${review.content}</div>
+        <div class="review-footer">
+          <span class="review-date">${formatDate(review.createdAt)}</span>
+        </div>
+      </div>
+    `).join('');
+        html += '</div>';
+    }
+
+    reviewsList.innerHTML = html;
+    currentReviews = allReviews;
 }
 
 function showCreateReview() {
@@ -359,7 +409,7 @@ async function deleteReviewHandler(id) {
     }
 }
 
-// games func
+// ========== GAMES FUNCTIONS ==========
 async function loadPopularGames() {
     const gamesList = document.getElementById('games-list');
     gamesList.innerHTML = '<div class="loading">Loading popular games...</div>';
@@ -415,7 +465,7 @@ function displayGames(games) {
   `).join('');
 }
 
-// check ayth status
+// Check authentication status on page load
 window.addEventListener('load', async () => {
     const token = TokenManager.get();
 

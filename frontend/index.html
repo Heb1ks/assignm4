@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>review gaming</title>
+  <title>Gaming Reviews Platform</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="container">
-  <h1 class="main-title">gaming review platform</h1>
+  <h1 class="main-title">Gaming Reviews Platform</h1>
 
   <div id="message" class="message"></div>
 
@@ -17,17 +17,17 @@
     <h2>Login</h2>
     <form id="login-form">
       <div class="form-group">
-        <label for="login-email">email</label>
+        <label for="login-email">Email</label>
         <input type="email" id="login-email" placeholder="your@email.com" required>
       </div>
       <div class="form-group">
-        <label for="login-password">password</label>
+        <label for="login-password">Password</label>
         <input type="password" id="login-password" placeholder="••••••••" required>
       </div>
-      <button type="submit" class="btn btn-primary">login</button>
+      <button type="submit" class="btn btn-primary">Login</button>
     </form>
     <div class="toggle-link" onclick="showSection('register')">
-      don't have an account? <span>register here</span>
+      Don't have an account? <span>Register here</span>
     </div>
   </div>
 
@@ -37,7 +37,7 @@
     <form id="register-form">
       <div class="form-group">
         <label for="register-name">Name</label>
-        <input type="text" id="register-name" placeholder="Kairat Nurtas" required>
+        <input type="text" id="register-name" placeholder="John Doe" required>
       </div>
       <div class="form-group">
         <label for="register-email">Email</label>
@@ -59,7 +59,7 @@
   <div id="profile-section" class="form-section">
     <div class="nav-menu">
       <button class="nav-btn" onclick="showSection('profile')">Profile</button>
-      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('reviews')">All Reviews</button>
       <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
 
@@ -75,7 +75,7 @@
   <div id="edit-profile-section" class="form-section">
     <div class="nav-menu">
       <button class="nav-btn" onclick="showSection('profile')">Profile</button>
-      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('reviews')">All Reviews</button>
       <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
 
@@ -103,12 +103,12 @@
   <div id="reviews-section" class="form-section">
     <div class="nav-menu">
       <button class="nav-btn" onclick="showSection('profile')">Profile</button>
-      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('reviews')">All Reviews</button>
       <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
 
     <div class="reviews-header">
-      <h2>My Reviews</h2>
+      <h2>Game Reviews</h2>
       <button class="btn btn-primary" onclick="showCreateReview()" style="width: auto; margin: 0;">+ New Review</button>
     </div>
     <div id="reviews-list"></div>
@@ -119,7 +119,7 @@
   <div id="create-review-section" class="form-section">
     <div class="nav-menu">
       <button class="nav-btn" onclick="showSection('profile')">Profile</button>
-      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('reviews')">All Reviews</button>
       <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
 
@@ -159,7 +159,7 @@
   <div id="edit-review-section" class="form-section">
     <div class="nav-menu">
       <button class="nav-btn" onclick="showSection('profile')">Profile</button>
-      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('reviews')">All Reviews</button>
       <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
 
@@ -200,7 +200,7 @@
   <div id="games-section" class="form-section">
     <div class="nav-menu">
       <button class="nav-btn" onclick="showSection('profile')">Profile</button>
-      <button class="nav-btn" onclick="showSection('reviews')">My Reviews</button>
+      <button class="nav-btn" onclick="showSection('reviews')">All Reviews</button>
       <button class="nav-btn" onclick="showSection('games')">Discover Games</button>
     </div>
 
